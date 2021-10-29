@@ -17,7 +17,7 @@ priceForm.onsubmit = async (e) => {
     seriesDecreaseValue: Number(inputValues.unifMod.value) / 100
   };
   
-  let jsonRequest = new Request('data/20-bulros.json');
+  let jsonRequest = new Request('data/21-bulros.json');
   fetch(jsonRequest)
   .then(function(response) {
       return response.json();
