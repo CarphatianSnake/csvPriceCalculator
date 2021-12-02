@@ -17,7 +17,7 @@ priceForm.onsubmit = async (e) => {
     seriesDecreaseValue: Number(inputValues.unifMod.value) / 100
   };
   
-  let jsonRequest = new Request('data/24-rexel.json');
+  let jsonRequest = new Request('data/26-raskhodka-duplo.json');
   fetch(jsonRequest)
   .then(function(response) {
       return response.json();
