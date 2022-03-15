@@ -107,20 +107,20 @@ priceForm.onsubmit = async (e) => {
       }   
     });
 
-    document.getElementById('itemsCount').innerHTML = 'Количество добавленных товаров: ' + priceObject.totalItems + ' ед.';
-    document.getElementById('charCount').innerHTML = 'Количество добавленных характеристик: ' + priceObject.charCounter + ' ед.';
-    document.getElementById('tableShortDescCount').innerHTML = 'Количество табличных кратких описаний: ' + priceObject.tableShortDescCounter + ' ед.';
-    document.getElementById('photosCount').innerHTML = 'Количество добавленных фотографий: ' + priceObject.photoCounter + ' ед.';
-    document.getElementById('symbolsCount').innerHTML = 'Количество символов в описаниях: ' + priceObject.descriptionSymbolCount + ' симв.';
-    document.getElementById('videosCount').innerHTML = 'Количество добавленных видео: ' + priceObject.videoCounter + ' ед.';
-    document.getElementById('accAddCount').innerHTML = 'Количество проведенных товаров: ' + priceObject.accCounter + ' ед.';
-    document.getElementById('englishModifier').innerHTML = 'Добавлено товаров с англоязычных ресурсов: ' + priceObject.englishModifierCounter + ' ед.';
-    document.getElementById('uniformityModifier').innerHTML = 'Количество однообразных товаров: ' + priceObject.uniformityModifierCounter + ' ед.';
-    document.getElementById('netCost').innerHTML = 'Цена задачи без бонуса исполнителю: ' + Math.round(priceObject.netPrice()) + ' руб.';
-    document.getElementById('workerBonus').innerHTML = 'Бонус исполнителю за скорость и качество: ' + Math.round(priceObject.SAQBonus()) + ' руб. (' + (priceList.SAQBonusConst * 100) + ' %)';
-    document.getElementById('workerToPay').innerHTML = 'К оплате исполнителю: ' + Math.round(priceObject.managerTotalPrice()) + ' руб.';
-    document.getElementById('leaderBonus').innerHTML = 'Бонус ведущему: ' + Math.round(priceObject.leaderBonus()) + ' руб. (' + (priceList.leaderBonusConst * 100) + ' %)';
-    document.getElementById('fullCost').innerHTML = 'Общая стоимость задачи: ' + Math.round(priceObject.totalPrice()) + ' руб.';
+    document.getElementById('itemsCount').innerHTML = `Количество добавленных товаров: ${priceObject.totalItems} ед.`;
+    document.getElementById('charCount').innerHTML = `Количество добавленных характеристик: ${priceObject.charCounter} ед.`;
+    document.getElementById('tableShortDescCount').innerHTML = `Количество табличных кратких описаний ${priceObject.tableShortDescCounter} ед.`;
+    document.getElementById('photosCount').innerHTML = `Количество добавленных фотографий: ${priceObject.photoCounter} ед.`;
+    document.getElementById('symbolsCount').innerHTML = `Количество символов в описаниях: ${priceObject.descriptionSymbolCount} симв.`;
+    document.getElementById('videosCount').innerHTML = `Количество добавленных видео: ${priceObject.videoCounter} ед.`;
+    document.getElementById('accAddCount').innerHTML = `Количество проведенных товаров: ${priceObject.accCounter} ед.`;
+    document.getElementById('englishModifier').innerHTML = `Добавлено товаров с англоязычных ресурсов: ${priceObject.englishModifierCounter} ед.`;
+    document.getElementById('uniformityModifier').innerHTML = `Количество однообразных товаров: ${priceObject.uniformityModifierCounter} ед.`;
+    document.getElementById('netCost').innerHTML = `Цена задачи без бонуса исполнителю: ${Math.round(priceObject.netPrice())} руб.`;
+    document.getElementById('workerBonus').innerHTML = `Бонус исполнителю за скорость и качество: ${Math.round(priceObject.SAQBonus())} руб. (${(priceList.SAQBonusConst * 100)} %)`;
+    document.getElementById('workerToPay').innerHTML = `К оплате исполнителю: ${Math.round(priceObject.managerTotalPrice())} руб.`;
+    document.getElementById('leaderBonus').innerHTML = `Бонус ведущему: ${Math.round(priceObject.leaderBonus())} руб. ( ${(priceList.leaderBonusConst * 100)} %)`;
+    document.getElementById('fullCost').innerHTML = `Общая стоимость задачи: ${Math.round(priceObject.totalPrice())} руб.`;
   }
 
 };
