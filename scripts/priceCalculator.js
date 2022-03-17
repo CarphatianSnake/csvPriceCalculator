@@ -5,16 +5,16 @@ priceForm.onsubmit = async (e) => {
   const inputValues = document.forms.priceForm;
 
   const priceList = {
-    charPriceConst: Number(inputValues.charPrice.value),
-    photoPriceConst: Number(inputValues.imgPrice.value),
-    tableShortDescriptionPriceConst: Number(inputValues.tblDescPrice.value),
-    videoPriceConst: Number(inputValues.vidPrice.value),
-    accAddPriceConst: Number(inputValues.accAddPrice.value),
-    descriptionSymbolCostConst: Number(inputValues.descrPrice.value) / 1000,
-    SAQBonusConst: inputValues.saqCheckbox.checked ? Number(inputValues.saq.value) / 100 : 0,
-    leaderBonusConst: inputValues.leaderCheckbox.checked ? Number(inputValues.leadBonus.value) / 100 : 0,
-    englishBonus: Number(inputValues.engBonus.value) / 100,
-    seriesDecreaseValue: Number(inputValues.unifMod.value) / 100
+    charPriceConst: +inputValues.charPrice.value,
+    photoPriceConst: +inputValues.imgPrice.value,
+    tableShortDescriptionPriceConst: +inputValues.tblDescPrice.value,
+    videoPriceConst: +inputValues.vidPrice.value,
+    accAddPriceConst: +inputValues.accAddPrice.value,
+    descriptionSymbolCostConst: +inputValues.descrPrice.value / 1000,
+    SAQBonusConst: inputValues.saqCheckbox.checked ? +inputValues.saq.value / 100 : 0,
+    leaderBonusConst: inputValues.leaderCheckbox.checked ? +inputValues.leadBonus.value / 100 : 0,
+    englishBonus: +inputValues.engBonus.value / 100,
+    seriesDecreaseValue: +inputValues.unifMod.value / 100
   };
   
   let jsonRequest = new Request('data/74-epson-projectors.json');
@@ -24,7 +24,7 @@ priceForm.onsubmit = async (e) => {
   })
   .then(function(data) {
       return netPrice(data);
-  })
+  });
 
   let netPrice = function (json) {
     const regexFlex = new RegExp('flex');
@@ -52,7 +52,7 @@ priceForm.onsubmit = async (e) => {
       leaderBonus: function () {return (this.netPrice() * priceList.leaderBonusConst);},
       totalPrice: function () {return (this.managerTotalPrice() + this.leaderBonus());}
     };
-    let modifierCalculator = function (elmnt) {
+    let modifierCalculator = (elmnt) => {
       if (elmnt.isEnglish && elmnt.isSeries) {
         priceObject.englishModifierCounter++;
         priceObject.uniformityModifierCounter++;
@@ -63,26 +63,26 @@ priceForm.onsubmit = async (e) => {
       } else if (elmnt.isSeries && !elmnt.isEnglish) {
         priceObject.uniformityModifierCounter++;
         return (1 - priceList.seriesDecreaseValue);
-      } else return (1);
-    }
-    let spamCleaner = function (elmnt) {
+      } else {return (1);}
+    };
+    let spamCleaner = (elmnt) => {
       let spamKeys = [];
       keysToDelete.forEach(function(ktd) {
         spamKeys.push(ktd);
       });
       for (let key in elmnt) {
-        if (key !== 'isEnglish' && key !== 'isSeries' && elmnt[key] === '') spamKeys.push(key);
+        if (key !== 'isEnglish' && key !== 'isSeries' && elmnt[key] === '') {spamKeys.push(key);}
       }
         spamKeys.forEach(function(sk) {
           delete elmnt[sk];
         });
-    }
+    };
     json.forEach(function (element) {
+      const modCalc = modifierCalculator(element);
       let  descriptionSymbolCalc = function (descr) {
         priceObject.descriptionSymbolCount += descr.replace(/\s+/g, '').length;
         priceObject.descriptionPrice += priceList.descriptionSymbolCostConst * descr.replace(/\s+/g, '').length * modCalc;
-      }
-      const modCalc = modifierCalculator(element);
+      };
       spamCleaner(element);
       for (let key in element) {
         if (key !== 'isEnglish' && key !== 'isSeries') {
@@ -98,7 +98,7 @@ priceForm.onsubmit = async (e) => {
           } else if (key.includes('СТ ')) {
             priceObject.accCounter += element[key].split(regexDoubleComma).length;
             priceObject.accPrice += priceList.accAddPriceConst * element[key].split(regexDoubleComma).length;
-          } else if (key === 'Описание') descriptionSymbolCalc(element[key]);
+          } else if (key === 'Описание') {descriptionSymbolCalc(element[key]);}
           else {
             priceObject.charCounter++;
             priceObject.charPrice += priceList.charPriceConst * modCalc;
@@ -107,20 +107,48 @@ priceForm.onsubmit = async (e) => {
       }   
     });
 
-    document.getElementById('itemsCount').innerHTML = `Количество добавленных товаров: ${priceObject.totalItems} ед.`;
-    document.getElementById('charCount').innerHTML = `Количество добавленных характеристик: ${priceObject.charCounter} ед.`;
-    document.getElementById('tableShortDescCount').innerHTML = `Количество табличных кратких описаний ${priceObject.tableShortDescCounter} ед.`;
-    document.getElementById('photosCount').innerHTML = `Количество добавленных фотографий: ${priceObject.photoCounter} ед.`;
-    document.getElementById('symbolsCount').innerHTML = `Количество символов в описаниях: ${priceObject.descriptionSymbolCount} симв.`;
-    document.getElementById('videosCount').innerHTML = `Количество добавленных видео: ${priceObject.videoCounter} ед.`;
-    document.getElementById('accAddCount').innerHTML = `Количество проведенных товаров: ${priceObject.accCounter} ед.`;
-    document.getElementById('englishModifier').innerHTML = `Добавлено товаров с англоязычных ресурсов: ${priceObject.englishModifierCounter} ед.`;
-    document.getElementById('uniformityModifier').innerHTML = `Количество однообразных товаров: ${priceObject.uniformityModifierCounter} ед.`;
-    document.getElementById('netCost').innerHTML = `Цена задачи без бонуса исполнителю: ${Math.round(priceObject.netPrice())} руб.`;
-    document.getElementById('workerBonus').innerHTML = `Бонус исполнителю за скорость и качество: ${Math.round(priceObject.SAQBonus())} руб. (${(priceList.SAQBonusConst * 100)} %)`;
-    document.getElementById('workerToPay').innerHTML = `К оплате исполнителю: ${Math.round(priceObject.managerTotalPrice())} руб.`;
-    document.getElementById('leaderBonus').innerHTML = `Бонус ведущему: ${Math.round(priceObject.leaderBonus())} руб. ( ${(priceList.leaderBonusConst * 100)} %)`;
-    document.getElementById('fullCost').innerHTML = `Общая стоимость задачи: ${Math.round(priceObject.totalPrice())} руб.`;
-  }
+    document.getElementById('itemsCount').innerHTML = `
+      Количество добавленных товаров: ${priceObject.totalItems} ед.
+    `;
+    document.getElementById('charCount').innerHTML = `
+      Количество добавленных характеристик: ${priceObject.charCounter} ед.
+    `;
+    document.getElementById('tableShortDescCount').innerHTML = `
+      Количество табличных кратких описаний ${priceObject.tableShortDescCounter} ед.
+    `;
+    document.getElementById('photosCount').innerHTML = `
+      Количество добавленных фотографий: ${priceObject.photoCounter} ед.
+    `;
+    document.getElementById('symbolsCount').innerHTML = `
+      Количество символов в описаниях: ${priceObject.descriptionSymbolCount} симв.
+    `;
+    document.getElementById('videosCount').innerHTML = `
+      Количество добавленных видео: ${priceObject.videoCounter} ед.
+    `;
+    document.getElementById('accAddCount').innerHTML = `
+      Количество проведенных товаров: ${priceObject.accCounter} ед.
+    `;
+    document.getElementById('englishModifier').innerHTML = `
+      Добавлено товаров с англоязычных ресурсов: ${priceObject.englishModifierCounter} ед.
+    `;
+    document.getElementById('uniformityModifier').innerHTML = `
+      Количество однообразных товаров: ${priceObject.uniformityModifierCounter} ед.
+    `;
+    document.getElementById('netCost').innerHTML = `
+      Цена задачи без бонуса исполнителю: ${Math.round(priceObject.netPrice())} руб.
+    `;
+    document.getElementById('workerBonus').innerHTML = `
+      Бонус исполнителю за скорость и качество: ${Math.round(priceObject.SAQBonus())} руб. (${(priceList.SAQBonusConst * 100)} %)
+    `;
+    document.getElementById('workerToPay').innerHTML = `
+      К оплате исполнителю: ${Math.round(priceObject.managerTotalPrice())} руб.
+    `;
+    document.getElementById('leaderBonus').innerHTML = `
+      Бонус ведущему: ${Math.round(priceObject.leaderBonus())} руб. ( ${(priceList.leaderBonusConst * 100)} %)
+    `;
+    document.getElementById('fullCost').innerHTML = `
+      Общая стоимость задачи: ${Math.round(priceObject.totalPrice())} руб.
+    `;
+  };
 
 };
